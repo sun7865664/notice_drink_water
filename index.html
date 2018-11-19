@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Rapidwechat</title>
+  </head>
+  <body>
+    <!-- <button id="information-dialog">点我弹框</button> -->
+    <div>
+      <h2>今天又是美好的一天，工作再忙，别忘了喝水哦！</h2>
+    </div>
+    <div id="info-selection"></div>
+    <script>
+      const ipc = require('electron').ipcRenderer
+
+      // const informationBtn = document.getElementById('information-dialog')
+
+      // informationBtn.addEventListener('click', function (event) {
+      //   ipc.send('open-information-dialog')
+      // })
+
+      setTimeout(function() {
+        ipc.send('open-information-dialog')
+      }, 10 * 1000);
+
+      function getTimeStr(date) {
+        var str = date.toLocaleDateString();
+        str += " " + date.getHours();
+        str += ":" + date.getMinutes();
+        str += ":" + date.getSeconds();
+        return str;
+      }
+
+      ipc.on('information-dialog-selection', function (event, index) {
+        let message = '<p>你在' + getTimeStr(new Date()) + '选择了'
+        if (index === 0) {
+          message += '现在就喝.';
+        }
+        else {
+          message += '这就去倒水.'
+        }
+        message += '</p>'
+        let html = document.getElementById('info-selection').innerHTML || ""
+        document.getElementById('info-selection').innerHTML = html + message
+        setTimeout(function() {
+          ipc.send('open-information-dialog')
+        }, 60 * 60 * 1000);
+      })
+    </script>
+  </body>
+</html>
